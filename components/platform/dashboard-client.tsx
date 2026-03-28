@@ -36,6 +36,9 @@ import {
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 
+const surfaceClassName = "border-white/10 bg-card/60 text-card-foreground"
+const insetClassName = "rounded-xl border border-white/10 bg-background/50"
+
 async function getDashboardData() {
   const response = await fetch("/api/platform/dashboard?userId=user-avery")
   if (!response.ok) {
@@ -158,8 +161,8 @@ export function DashboardClient() {
               Every score keeps you entered, every renewal grows the pool, and your charity contribution stays visible all month.
             </p>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="bg-background/50 rounded-xl border border-white/10 p-4">
+            <div className="grid gap-3 sm:grid-cols-3">
+            <div className={`${insetClassName} p-4`}>
               <div className="text-muted-foreground flex items-center gap-2">
                 <Wallet className="size-4" /> Status
               </div>
@@ -168,7 +171,7 @@ export function DashboardClient() {
                 Renews {formatDate(data.subscription.renewsAt)}
               </p>
             </div>
-            <div className="bg-background/50 rounded-xl border border-white/10 p-4">
+            <div className={`${insetClassName} p-4`}>
               <div className="text-muted-foreground flex items-center gap-2">
                 <Trophy className="size-4" /> Pending pool
               </div>
@@ -179,7 +182,7 @@ export function DashboardClient() {
                 {formatMonthLabel(data.participation.upcomingDrawMonth)} entry live
               </p>
             </div>
-            <div className="bg-background/50 rounded-xl border border-white/10 p-4">
+            <div className={`${insetClassName} p-4`}>
               <div className="text-muted-foreground flex items-center gap-2">
                 <HeartHandshake className="size-4" /> Charity
               </div>
@@ -193,13 +196,13 @@ export function DashboardClient() {
       </Card>
 
       {message ? (
-        <Card className="bg-card/60 border-white/10 text-card-foreground">
+        <Card className={surfaceClassName}>
           <CardContent className="p-4 text-sm">{message}</CardContent>
         </Card>
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="bg-card/60 border-white/10 text-card-foreground">
+        <Card className={surfaceClassName}>
           <CardHeader>
             <CardDescription className="text-xs uppercase tracking-[0.3em]">
               Score Engine
@@ -208,7 +211,7 @@ export function DashboardClient() {
           </CardHeader>
           <CardContent className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
             <form
-              className="bg-background/40 space-y-4 rounded-xl border border-white/8 p-4"
+              className={`${insetClassName} space-y-4 p-4`}
               onSubmit={(event) => {
                 event.preventDefault()
                 runAction(() =>
@@ -226,7 +229,7 @@ export function DashboardClient() {
                   value={scoreDate}
                   onChange={(event) => setScoreDate(event.target.value)}
                   type="date"
-                  className="bg-background/70 text-foreground"
+                  className="bg-background"
                 />
               </div>
               <div className="space-y-2">
@@ -237,7 +240,7 @@ export function DashboardClient() {
                   type="number"
                   min={1}
                   max={45}
-                  className="bg-background/70 text-foreground"
+                  className="bg-background"
                 />
               </div>
               <Button disabled={isPending} type="submit" className="h-11 w-full">
@@ -248,7 +251,7 @@ export function DashboardClient() {
               {data.scores.map((score, index) => (
                 <div
                   key={score.id}
-                  className="bg-background/40 flex items-center justify-between rounded-xl border border-white/8 px-4 py-4"
+                  className={`${insetClassName} flex items-center justify-between px-4 py-4`}
                 >
                   <div>
                     <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
@@ -256,7 +259,7 @@ export function DashboardClient() {
                     </p>
                     <p className="mt-1 text-lg font-semibold">{formatDate(score.date)}</p>
                   </div>
-                  <div className="bg-background/70 rounded-xl px-4 py-2 text-2xl font-semibold">
+                  <div className="rounded-xl border border-white/10 bg-background px-4 py-2 text-2xl font-semibold">
                     {score.value}
                   </div>
                 </div>
@@ -269,7 +272,7 @@ export function DashboardClient() {
         </Card>
 
         <div className="space-y-6">
-          <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <Card className={surfaceClassName}>
             <CardHeader>
               <CardDescription className="text-xs uppercase tracking-[0.3em]">
                 Giving Control
@@ -277,7 +280,7 @@ export function DashboardClient() {
               <CardTitle>Charity allocation</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="bg-background/40 rounded-xl border border-white/8 p-4">
+              <div className={`${insetClassName} p-4`}>
                 <p className="text-muted-foreground text-sm">{data.selectedCharity.location}</p>
                 <p className="mt-2 text-xl font-semibold">{data.selectedCharity.name}</p>
                 <p className="text-muted-foreground mt-2 text-sm leading-6">
@@ -290,7 +293,7 @@ export function DashboardClient() {
                 <select
                   value={charityId || data.selectedCharity.id}
                   onChange={(event) => setCharityId(event.target.value)}
-                  className="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
+                  className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring h-10 w-full rounded-md border px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
                 >
                   {data.charities.map((charity) => (
                     <option key={charity.id} value={charity.id} className="bg-slate-900">
@@ -307,7 +310,7 @@ export function DashboardClient() {
                   type="number"
                   min={10}
                   max={100}
-                  className="bg-background/70 text-foreground"
+                  className="bg-background"
                 />
               </div>
               <Button
@@ -330,7 +333,7 @@ export function DashboardClient() {
             </CardContent>
           </Card>
 
-          <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <Card className={surfaceClassName}>
             <CardHeader>
               <CardDescription className="text-xs uppercase tracking-[0.3em]">
                 Monthly Draws
@@ -339,17 +342,17 @@ export function DashboardClient() {
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 sm:grid-cols-3">
-                <div className="bg-background/50 rounded-xl p-4">
+                <div className={`${insetClassName} p-4`}>
                   <p className="text-muted-foreground text-sm">Draws entered</p>
                   <p className="mt-2 text-3xl font-semibold">{data.participation.drawsEntered}</p>
                 </div>
-                <div className="bg-background/50 rounded-xl p-4">
+                <div className={`${insetClassName} p-4`}>
                   <p className="text-muted-foreground text-sm">Total won</p>
                   <p className="mt-2 text-3xl font-semibold">
                     {formatCurrency(data.winnings.totalWonCents)}
                   </p>
                 </div>
-                <div className="bg-background/50 rounded-xl p-4">
+                <div className={`${insetClassName} p-4`}>
                   <p className="text-muted-foreground text-sm">Paid out</p>
                   <p className="mt-2 text-3xl font-semibold">
                     {formatCurrency(data.winnings.paidCents)}
@@ -374,7 +377,7 @@ export function DashboardClient() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card className="bg-card/60 border-white/10 text-card-foreground">
+        <Card className={surfaceClassName}>
           <CardHeader>
             <CardDescription className="text-xs uppercase tracking-[0.3em]">
               Registered Subscriber
@@ -383,34 +386,46 @@ export function DashboardClient() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
-              <Input
-                value={profileName || data.viewer.name}
-                onChange={(event) => setProfileName(event.target.value)}
-                placeholder="Full name"
-                className="bg-background/70 text-foreground"
-              />
-              <Input
-                value={profileEmail || data.viewer.email}
-                onChange={(event) => setProfileEmail(event.target.value)}
-                placeholder="Email"
-                className="bg-background/70 text-foreground"
-              />
-              <Input
-                value={profileCity || data.viewer.city}
-                onChange={(event) => setProfileCity(event.target.value)}
-                placeholder="City"
-                className="bg-background/70 text-foreground sm:col-span-2"
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Full name</label>
+                <Input
+                  value={profileName || data.viewer.name}
+                  onChange={(event) => setProfileName(event.target.value)}
+                  placeholder="Full name"
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Email</label>
+                <Input
+                  value={profileEmail || data.viewer.email}
+                  onChange={(event) => setProfileEmail(event.target.value)}
+                  placeholder="Email"
+                  className="bg-background"
+                />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <label className="text-sm font-medium">City</label>
+                <Input
+                  value={profileCity || data.viewer.city}
+                  onChange={(event) => setProfileCity(event.target.value)}
+                  placeholder="City"
+                  className="bg-background"
+                />
+              </div>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Bio</label>
+              <Textarea
+                value={profileBio || data.viewer.bio || ""}
+                onChange={(event) => setProfileBio(event.target.value)}
+                rows={4}
+                placeholder="Bio"
+                className="bg-background"
               />
             </div>
-            <Textarea
-              value={profileBio || data.viewer.bio || ""}
-              onChange={(event) => setProfileBio(event.target.value)}
-              rows={4}
-              placeholder="Bio"
-              className="bg-background/70 text-foreground"
-            />
             <div className="grid gap-3 sm:grid-cols-3">
-              <label className="bg-background/40 flex items-center gap-3 rounded-xl border border-white/10 px-3 py-3 text-sm">
+              <label className={`${insetClassName} flex items-center gap-3 px-3 py-3 text-sm`}>
                 <input
                   type="checkbox"
                   checked={drawAlerts}
@@ -418,7 +433,7 @@ export function DashboardClient() {
                 />
                 Draw alerts
               </label>
-              <label className="bg-background/40 flex items-center gap-3 rounded-xl border border-white/10 px-3 py-3 text-sm">
+              <label className={`${insetClassName} flex items-center gap-3 px-3 py-3 text-sm`}>
                 <input
                   type="checkbox"
                   checked={winnerAlerts}
@@ -426,7 +441,7 @@ export function DashboardClient() {
                 />
                 Winner alerts
               </label>
-              <label className="bg-background/40 flex items-center gap-3 rounded-xl border border-white/10 px-3 py-3 text-sm">
+              <label className={`${insetClassName} flex items-center gap-3 px-3 py-3 text-sm`}>
                 <input
                   type="checkbox"
                   checked={marketingEmails}
@@ -458,7 +473,7 @@ export function DashboardClient() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/60 border-white/10 text-card-foreground">
+        <Card className={surfaceClassName}>
           <CardHeader>
             <CardDescription className="text-xs uppercase tracking-[0.3em]">
               Better Auth + Polar
@@ -466,7 +481,7 @@ export function DashboardClient() {
             <CardTitle>Subscription and billing</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="bg-background/40 rounded-xl border border-white/8 p-4">
+            <div className={`${insetClassName} p-4`}>
               <p className="text-muted-foreground text-sm">Authenticated billing status</p>
               <p className="mt-2 text-2xl font-semibold">
                 {sessionPending
@@ -484,7 +499,7 @@ export function DashboardClient() {
                 className={`rounded-xl border p-4 ${
                   data.subscription.plan === "monthly"
                     ? "border-emerald-300/40 bg-emerald-300/10"
-                    : "bg-background/40 border-white/8"
+                    : insetClassName
                 }`}
               >
                 <p className="text-muted-foreground text-sm uppercase tracking-[0.25em]">
@@ -508,7 +523,7 @@ export function DashboardClient() {
                 className={`rounded-xl border p-4 ${
                   data.subscription.plan === "yearly"
                     ? "border-emerald-300/40 bg-emerald-300/10"
-                    : "bg-background/40 border-white/8"
+                    : insetClassName
                 }`}
               >
                 <p className="text-muted-foreground text-sm uppercase tracking-[0.25em]">
@@ -545,7 +560,7 @@ export function DashboardClient() {
             >
               Open customer portal
             </Button>
-            <div className="bg-background/40 rounded-xl border border-white/10 px-4 py-3 text-sm">
+            <div className={`${insetClassName} px-4 py-3 text-sm`}>
               Current plan:{" "}
               <span className="font-medium capitalize">{data.subscription.plan}</span>
               {" | "}Status:{" "}
@@ -564,7 +579,7 @@ export function DashboardClient() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card className="bg-card/60 border-white/10 text-card-foreground">
+        <Card className={surfaceClassName}>
           <CardHeader>
             <CardDescription className="text-xs uppercase tracking-[0.3em]">
               Performance
@@ -575,7 +590,7 @@ export function DashboardClient() {
             {data.recentDraws.map((draw) => (
               <div
                 key={draw.id}
-                className="bg-background/40 rounded-xl border border-white/8 p-4"
+                className={`${insetClassName} p-4`}
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -599,7 +614,7 @@ export function DashboardClient() {
           </CardContent>
         </Card>
 
-        <Card className="bg-card/60 border-white/10 text-card-foreground">
+        <Card className={surfaceClassName}>
           <CardHeader>
             <CardDescription className="text-xs uppercase tracking-[0.3em]">
               Proof Upload
@@ -609,7 +624,7 @@ export function DashboardClient() {
           <CardContent>
             {pendingProof ? (
               <div className="space-y-4">
-                <div className="bg-background/40 rounded-xl border border-white/8 p-4">
+                <div className={`${insetClassName} p-4`}>
                   <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
                     {formatMonthLabel(pendingProof.month)}
                   </p>
@@ -626,7 +641,7 @@ export function DashboardClient() {
                   value={proofUrl}
                   onChange={(event) => setProofUrl(event.target.value)}
                   placeholder="https://proof-link.example"
-                  className="bg-background/70 text-foreground"
+                  className="bg-background"
                 />
                 <Button
                   disabled={isPending || !proofUrl}
