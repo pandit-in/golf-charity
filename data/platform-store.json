@@ -1,0 +1,333 @@
+{
+  "meta": {
+    "currency": "USD",
+    "monthlyPriceCents": 2900,
+    "yearlyPriceCents": 29900,
+    "minimumCharityPercent": 10,
+    "prizePoolContributionPercent": 35
+  },
+  "charities": [
+    {
+      "id": "charity-bright-future",
+      "name": "Bright Future Foundation",
+      "slug": "bright-future-foundation",
+      "description": "Funds school access, sports programs, and mentoring for young people in underserved communities.",
+      "location": "Austin, Texas",
+      "tags": [
+        "Youth",
+        "Education",
+        "Community"
+      ],
+      "featured": true,
+      "image": "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?auto=format&fit=crop&w=1200&q=80",
+      "upcomingEvent": "Spring Golf Day · April 18"
+    },
+    {
+      "id": "charity-fairway-food",
+      "name": "Fairway Food Network",
+      "slug": "fairway-food-network",
+      "description": "Delivers meal access and nutrition kits through community golf events and local volunteers.",
+      "location": "Chicago, Illinois",
+      "tags": [
+        "Food",
+        "Families",
+        "Volunteer"
+      ],
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1200&q=80",
+      "upcomingEvent": "Summer Scramble for Hunger · June 09"
+    },
+    {
+      "id": "charity-green-hearts",
+      "name": "Green Hearts Recovery",
+      "slug": "green-hearts-recovery",
+      "description": "Supports mental health recovery programs and outdoor therapy initiatives for adults and teens.",
+      "location": "San Diego, California",
+      "tags": [
+        "Wellness",
+        "Mental Health",
+        "Recovery"
+      ],
+      "featured": false,
+      "image": "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+      "upcomingEvent": "Mindful Mulligans Charity Day · May 14"
+    }
+  ],
+  "users": [
+    {
+      "id": "user-avery",
+      "name": "Avery Collins",
+      "email": "avery@golfcharity.test",
+      "city": "Denver, Colorado",
+      "role": "subscriber",
+      "charityId": "charity-bright-future",
+      "bio": "Weekend player chasing cleaner rounds and bigger monthly charity impact.",
+      "preferences": {
+        "drawAlerts": true,
+        "winnerAlerts": true,
+        "marketingEmails": false
+      },
+      "subscription": {
+        "plan": "yearly",
+        "status": "active",
+        "startedAt": "2026-01-04",
+        "renewsAt": "2027-01-04",
+        "amountCents": 29900,
+        "charityPercent": 18,
+        "polarCustomerId": null,
+        "polarSubscriptionId": null,
+        "polarCheckoutId": null,
+        "polarProductId": null,
+        "latestOrderId": null
+      },
+      "scores": [
+        {
+          "id": "score-1",
+          "date": "2026-03-20",
+          "value": 34
+        },
+        {
+          "id": "score-2",
+          "date": "2026-03-12",
+          "value": 29
+        },
+        {
+          "id": "score-3",
+          "date": "2026-03-03",
+          "value": 31
+        },
+        {
+          "id": "score-4",
+          "date": "2026-02-25",
+          "value": 27
+        },
+        {
+          "id": "score-5",
+          "date": "2026-02-16",
+          "value": 35
+        }
+      ]
+    },
+    {
+      "id": "user-jordan",
+      "name": "Jordan Patel",
+      "email": "jordan@golfcharity.test",
+      "city": "Seattle, Washington",
+      "role": "subscriber",
+      "charityId": "charity-fairway-food",
+      "bio": "Plays fast, tracks every round, and backs hunger relief through every renewal.",
+      "preferences": {
+        "drawAlerts": true,
+        "winnerAlerts": true,
+        "marketingEmails": true
+      },
+      "subscription": {
+        "plan": "monthly",
+        "status": "active",
+        "startedAt": "2026-02-10",
+        "renewsAt": "2026-04-10",
+        "amountCents": 2900,
+        "charityPercent": 12,
+        "polarCustomerId": null,
+        "polarSubscriptionId": null,
+        "polarCheckoutId": null,
+        "polarProductId": null,
+        "latestOrderId": null
+      },
+      "scores": [
+        {
+          "id": "score-6",
+          "date": "2026-03-18",
+          "value": 34
+        },
+        {
+          "id": "score-7",
+          "date": "2026-03-07",
+          "value": 19
+        },
+        {
+          "id": "score-8",
+          "date": "2026-02-28",
+          "value": 12
+        },
+        {
+          "id": "score-9",
+          "date": "2026-02-20",
+          "value": 27
+        },
+        {
+          "id": "score-10",
+          "date": "2026-02-11",
+          "value": 35
+        }
+      ]
+    },
+    {
+      "id": "user-samira",
+      "name": "Samira Lee",
+      "email": "samira@golfcharity.test",
+      "city": "Atlanta, Georgia",
+      "role": "subscriber",
+      "charityId": "charity-green-hearts",
+      "bio": "Paused right now, but still active in community golf events and recovery fundraising.",
+      "preferences": {
+        "drawAlerts": false,
+        "winnerAlerts": true,
+        "marketingEmails": true
+      },
+      "subscription": {
+        "plan": "monthly",
+        "status": "inactive",
+        "startedAt": "2025-11-01",
+        "renewsAt": "2026-03-01",
+        "amountCents": 2900,
+        "charityPercent": 15,
+        "polarCustomerId": null,
+        "polarSubscriptionId": null,
+        "polarCheckoutId": null,
+        "polarProductId": null,
+        "latestOrderId": null
+      },
+      "scores": [
+        {
+          "id": "score-11",
+          "date": "2026-02-19",
+          "value": 8
+        },
+        {
+          "id": "score-12",
+          "date": "2026-02-10",
+          "value": 14
+        },
+        {
+          "id": "score-13",
+          "date": "2026-01-25",
+          "value": 18
+        },
+        {
+          "id": "score-14",
+          "date": "2026-01-12",
+          "value": 22
+        },
+        {
+          "id": "score-15",
+          "date": "2025-12-28",
+          "value": 16
+        }
+      ]
+    },
+    {
+      "id": "admin-maya",
+      "name": "Maya Reynolds",
+      "email": "admin@golfcharity.test",
+      "city": "New York, New York",
+      "role": "admin",
+      "charityId": "charity-bright-future",
+      "bio": "Oversees draws, payouts, and charity growth across the platform.",
+      "preferences": {
+        "drawAlerts": true,
+        "winnerAlerts": true,
+        "marketingEmails": false
+      },
+      "subscription": {
+        "plan": "yearly",
+        "status": "active",
+        "startedAt": "2026-01-01",
+        "renewsAt": "2027-01-01",
+        "amountCents": 29900,
+        "charityPercent": 10,
+        "polarCustomerId": null,
+        "polarSubscriptionId": null,
+        "polarCheckoutId": null,
+        "polarProductId": null,
+        "latestOrderId": null
+      },
+      "scores": [
+        {
+          "id": "score-16",
+          "date": "2026-03-02",
+          "value": 22
+        },
+        {
+          "id": "score-17",
+          "date": "2026-02-22",
+          "value": 25
+        },
+        {
+          "id": "score-18",
+          "date": "2026-02-10",
+          "value": 28
+        },
+        {
+          "id": "score-19",
+          "date": "2026-01-29",
+          "value": 17
+        },
+        {
+          "id": "score-20",
+          "date": "2026-01-16",
+          "value": 20
+        }
+      ]
+    }
+  ],
+  "draws": [
+    {
+      "id": "draw-2026-02",
+      "month": "2026-02",
+      "status": "published",
+      "logic": "random",
+      "numbers": [
+        12,
+        19,
+        27,
+        34,
+        35
+      ],
+      "simulatedNumbers": [
+        12,
+        19,
+        27,
+        34,
+        35
+      ],
+      "publishedAt": "2026-02-28T18:00:00.000Z",
+      "jackpotRolloverCents": 0,
+      "winners": [
+        {
+          "userId": "user-jordan",
+          "matchCount": 5,
+          "amountCents": 2023,
+          "paymentStatus": "pending",
+          "proofStatus": "pending",
+          "proofUrl": "https://example.com/proof/jordan-february"
+        },
+        {
+          "userId": "user-avery",
+          "matchCount": 3,
+          "amountCents": 1264,
+          "paymentStatus": "paid",
+          "proofStatus": "approved",
+          "proofUrl": "https://example.com/proof/avery-february"
+        }
+      ]
+    },
+    {
+      "id": "draw-2026-03",
+      "month": "2026-03",
+      "status": "draft",
+      "logic": "weighted",
+      "numbers": null,
+      "simulatedNumbers": [
+        19,
+        27,
+        29,
+        34,
+        35
+      ],
+      "publishedAt": null,
+      "jackpotRolloverCents": 0,
+      "winners": []
+    }
+  ]
+}
