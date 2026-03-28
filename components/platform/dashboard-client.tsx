@@ -11,7 +11,6 @@ import {
 import Link from "next/link"
 import { useMemo, useState, useTransition } from "react"
 
-import { Button } from "@/components/ui/button"
 import { authClient } from "@/lib/auth-client"
 import {
   addScoreAction,
@@ -26,6 +25,16 @@ import {
   formatDate,
   formatMonthLabel,
 } from "@/lib/platform/utils"
+import { Button } from "@/components/ui/button"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 async function getDashboardData() {
   const response = await fetch("/api/platform/dashboard?userId=user-avery")
@@ -33,26 +42,6 @@ async function getDashboardData() {
     throw new Error("Unable to load dashboard")
   }
   return (await response.json()) as DashboardSnapshot
-}
-
-function Card({
-  title,
-  eyebrow,
-  children,
-}: {
-  title: string
-  eyebrow?: string
-  children: React.ReactNode
-}) {
-  return (
-    <section className="rounded-[28px] border border-white/10 bg-white/5 p-6 shadow-[0_20px_80px_rgba(0,0,0,0.18)] backdrop-blur">
-      {eyebrow ? (
-        <p className="text-xs uppercase tracking-[0.3em] text-white/45">{eyebrow}</p>
-      ) : null}
-      <h2 className="mt-2 text-xl font-semibold text-white">{title}</h2>
-      <div className="mt-5">{children}</div>
-    </section>
-  )
 }
 
 export function DashboardClient() {
@@ -99,7 +88,7 @@ export function DashboardClient() {
 
   if (isError || !data) {
     return (
-      <div className="rounded-3xl border border-red-400/30 bg-red-500/10 p-6 text-red-100">
+      <div className="rounded-xl border border-red-400/30 bg-red-500/10 p-6 text-red-100">
         Dashboard failed to load.
       </div>
     )
@@ -156,62 +145,70 @@ export function DashboardClient() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-[36px] border border-emerald-200/15 bg-[radial-gradient(circle_at_top_left,_rgba(89,212,167,0.35),_transparent_35%),linear-gradient(135deg,rgba(8,19,17,0.95),rgba(9,34,29,0.82))] p-8 text-white shadow-[0_24px_100px_rgba(4,18,16,0.45)]">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+      <Card className="bg-card/60 border-white/10 text-card-foreground shadow-[0_24px_100px_rgba(4,18,16,0.45)] backdrop-blur">
+        <CardContent className="grid gap-6 p-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-end">
           <div className="max-w-2xl space-y-3">
-            <p className="text-xs uppercase tracking-[0.35em] text-emerald-100/55">
+            <p className="text-muted-foreground text-xs uppercase tracking-[0.35em]">
               Subscriber Dashboard
             </p>
             <h1 className="text-4xl font-semibold tracking-tight">
               Play your next round with purpose.
             </h1>
-            <p className="max-w-xl text-base text-white/72">
+            <p className="text-muted-foreground max-w-xl text-base">
               Every score keeps you entered, every renewal grows the pool, and your charity contribution stays visible all month.
             </p>
           </div>
           <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
-              <div className="flex items-center gap-2 text-white/60">
+            <div className="bg-background/50 rounded-xl border border-white/10 p-4">
+              <div className="text-muted-foreground flex items-center gap-2">
                 <Wallet className="size-4" /> Status
               </div>
               <p className="mt-3 text-2xl font-semibold capitalize">{data.subscription.status}</p>
-              <p className="text-sm text-white/55">Renews {formatDate(data.subscription.renewsAt)}</p>
+              <p className="text-muted-foreground text-sm">
+                Renews {formatDate(data.subscription.renewsAt)}
+              </p>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
-              <div className="flex items-center gap-2 text-white/60">
+            <div className="bg-background/50 rounded-xl border border-white/10 p-4">
+              <div className="text-muted-foreground flex items-center gap-2">
                 <Trophy className="size-4" /> Pending pool
               </div>
               <p className="mt-3 text-2xl font-semibold">
                 {formatCurrency(data.winnings.pendingCents)}
               </p>
-              <p className="text-sm text-white/55">
+              <p className="text-muted-foreground text-sm">
                 {formatMonthLabel(data.participation.upcomingDrawMonth)} entry live
               </p>
             </div>
-            <div className="rounded-3xl border border-white/10 bg-white/6 p-4">
-              <div className="flex items-center gap-2 text-white/60">
+            <div className="bg-background/50 rounded-xl border border-white/10 p-4">
+              <div className="text-muted-foreground flex items-center gap-2">
                 <HeartHandshake className="size-4" /> Charity
               </div>
               <p className="mt-3 text-xl font-semibold">{data.selectedCharity.name}</p>
-              <p className="text-sm text-white/55">
+              <p className="text-muted-foreground text-sm">
                 {data.subscription.charityPercent}% of your plan
               </p>
             </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {message ? (
-        <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-white/75">
-          {message}
-        </div>
+        <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <CardContent className="p-4 text-sm">{message}</CardContent>
+        </Card>
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card title="Last 5 Stableford scores" eyebrow="Score Engine">
-          <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <CardHeader>
+            <CardDescription className="text-xs uppercase tracking-[0.3em]">
+              Score Engine
+            </CardDescription>
+            <CardTitle>Last 5 Stableford scores</CardTitle>
+          </CardHeader>
+          <CardContent className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
             <form
-              className="space-y-4 rounded-3xl border border-white/8 bg-black/15 p-4"
+              className="bg-background/40 space-y-4 rounded-xl border border-white/8 p-4"
               onSubmit={(event) => {
                 event.preventDefault()
                 runAction(() =>
@@ -223,31 +220,27 @@ export function DashboardClient() {
                 )
               }}
             >
-              <div>
-                <label className="mb-2 block text-sm text-white/70">Round date</label>
-                <input
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Round date</label>
+                <Input
                   value={scoreDate}
                   onChange={(event) => setScoreDate(event.target.value)}
                   type="date"
-                  className="w-full rounded-2xl border border-white/10 bg-white/8 px-3 py-2.5 text-white outline-none"
+                  className="bg-background/70 text-foreground"
                 />
               </div>
-              <div>
-                <label className="mb-2 block text-sm text-white/70">Stableford score</label>
-                <input
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Stableford score</label>
+                <Input
                   value={scoreValue}
                   onChange={(event) => setScoreValue(event.target.value)}
                   type="number"
                   min={1}
                   max={45}
-                  className="w-full rounded-2xl border border-white/10 bg-white/8 px-3 py-2.5 text-white outline-none"
+                  className="bg-background/70 text-foreground"
                 />
               </div>
-              <Button
-                disabled={isPending}
-                type="submit"
-                className="h-11 w-full rounded-2xl bg-emerald-400 text-emerald-950 hover:bg-emerald-300"
-              >
+              <Button disabled={isPending} type="submit" className="h-11 w-full">
                 {isPending ? "Saving..." : "Save score"}
               </Button>
             </form>
@@ -255,49 +248,49 @@ export function DashboardClient() {
               {data.scores.map((score, index) => (
                 <div
                   key={score.id}
-                  className="flex items-center justify-between rounded-3xl border border-white/8 bg-white/[0.04] px-4 py-4"
+                  className="bg-background/40 flex items-center justify-between rounded-xl border border-white/8 px-4 py-4"
                 >
                   <div>
-                    <p className="text-xs uppercase tracking-[0.25em] text-white/45">
+                    <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
                       Round {String(index + 1).padStart(2, "0")}
                     </p>
-                    <p className="mt-1 text-lg font-semibold text-white">
-                      {formatDate(score.date)}
-                    </p>
+                    <p className="mt-1 text-lg font-semibold">{formatDate(score.date)}</p>
                   </div>
-                  <div className="rounded-2xl bg-white/8 px-4 py-2 text-2xl font-semibold text-emerald-200">
+                  <div className="bg-background/70 rounded-xl px-4 py-2 text-2xl font-semibold">
                     {score.value}
                   </div>
                 </div>
               ))}
-              <p className="text-sm text-white/45">
+              <p className="text-muted-foreground text-sm">
                 The system automatically keeps only your most recent five rounds.
               </p>
             </div>
-          </div>
+          </CardContent>
         </Card>
 
         <div className="space-y-6">
-          <Card title="Charity allocation" eyebrow="Giving Control">
-            <div className="space-y-4">
-              <div className="rounded-3xl border border-white/8 bg-black/15 p-4">
-                <p className="text-sm text-white/55">{data.selectedCharity.location}</p>
-                <p className="mt-2 text-xl font-semibold text-white">
-                  {data.selectedCharity.name}
-                </p>
-                <p className="mt-2 text-sm leading-6 text-white/70">
+          <Card className="bg-card/60 border-white/10 text-card-foreground">
+            <CardHeader>
+              <CardDescription className="text-xs uppercase tracking-[0.3em]">
+                Giving Control
+              </CardDescription>
+              <CardTitle>Charity allocation</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="bg-background/40 rounded-xl border border-white/8 p-4">
+                <p className="text-muted-foreground text-sm">{data.selectedCharity.location}</p>
+                <p className="mt-2 text-xl font-semibold">{data.selectedCharity.name}</p>
+                <p className="text-muted-foreground mt-2 text-sm leading-6">
                   {data.selectedCharity.description}
                 </p>
-                <p className="mt-4 text-sm text-emerald-200">
-                  {data.selectedCharity.upcomingEvent}
-                </p>
+                <p className="mt-4 text-sm">{data.selectedCharity.upcomingEvent}</p>
               </div>
-              <div>
-                <label className="mb-2 block text-sm text-white/70">Choose your charity</label>
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Choose your charity</label>
                 <select
                   value={charityId || data.selectedCharity.id}
                   onChange={(event) => setCharityId(event.target.value)}
-                  className="w-full rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none"
+                  className="border-input bg-background text-foreground w-full rounded-md border px-3 py-2 text-sm outline-none"
                 >
                   {data.charities.map((charity) => (
                     <option key={charity.id} value={charity.id} className="bg-slate-900">
@@ -306,17 +299,15 @@ export function DashboardClient() {
                   ))}
                 </select>
               </div>
-              <div>
-                <label className="mb-2 block text-sm text-white/70">
-                  Contribution percentage
-                </label>
-                <input
+              <div className="space-y-2">
+                <label className="text-sm font-medium">Contribution percentage</label>
+                <Input
                   value={charityPercent || String(data.subscription.charityPercent)}
                   onChange={(event) => setCharityPercent(event.target.value)}
                   type="number"
                   min={10}
                   max={100}
-                  className="w-full rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none"
+                  className="bg-background/70 text-foreground"
                 />
               </div>
               <Button
@@ -332,82 +323,94 @@ export function DashboardClient() {
                     }),
                   )
                 }
-                className="h-11 w-full rounded-2xl bg-white text-slate-950 hover:bg-white/90"
+                className="h-11 w-full"
               >
                 Update charity plan
               </Button>
-            </div>
+            </CardContent>
           </Card>
 
-          <Card title="Participation and winnings" eyebrow="Monthly Draws">
-            <div className="grid gap-3 sm:grid-cols-3">
-              <div className="rounded-3xl bg-white/6 p-4">
-                <p className="text-sm text-white/55">Draws entered</p>
-                <p className="mt-2 text-3xl font-semibold text-white">
-                  {data.participation.drawsEntered}
+          <Card className="bg-card/60 border-white/10 text-card-foreground">
+            <CardHeader>
+              <CardDescription className="text-xs uppercase tracking-[0.3em]">
+                Monthly Draws
+              </CardDescription>
+              <CardTitle>Participation and winnings</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div className="bg-background/50 rounded-xl p-4">
+                  <p className="text-muted-foreground text-sm">Draws entered</p>
+                  <p className="mt-2 text-3xl font-semibold">{data.participation.drawsEntered}</p>
+                </div>
+                <div className="bg-background/50 rounded-xl p-4">
+                  <p className="text-muted-foreground text-sm">Total won</p>
+                  <p className="mt-2 text-3xl font-semibold">
+                    {formatCurrency(data.winnings.totalWonCents)}
+                  </p>
+                </div>
+                <div className="bg-background/50 rounded-xl p-4">
+                  <p className="text-muted-foreground text-sm">Paid out</p>
+                  <p className="mt-2 text-3xl font-semibold">
+                    {formatCurrency(data.winnings.paidCents)}
+                  </p>
+                </div>
+              </div>
+              <div className="mt-5 rounded-xl border border-dashed border-emerald-300/30 bg-emerald-300/10 p-4">
+                <div className="flex items-center gap-2 text-sm uppercase tracking-[0.25em]">
+                  <Target className="size-4" />
+                  Upcoming numbers
+                </div>
+                <p className="mt-3 text-2xl font-semibold">
+                  {cnNumberList(data.participation.upcomingDrawNumbers)}
+                </p>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  {formatMonthLabel(data.participation.upcomingDrawMonth)}
                 </p>
               </div>
-              <div className="rounded-3xl bg-white/6 p-4">
-                <p className="text-sm text-white/55">Total won</p>
-                <p className="mt-2 text-3xl font-semibold text-white">
-                  {formatCurrency(data.winnings.totalWonCents)}
-                </p>
-              </div>
-              <div className="rounded-3xl bg-white/6 p-4">
-                <p className="text-sm text-white/55">Paid out</p>
-                <p className="mt-2 text-3xl font-semibold text-white">
-                  {formatCurrency(data.winnings.paidCents)}
-                </p>
-              </div>
-            </div>
-            <div className="mt-5 rounded-3xl border border-dashed border-emerald-300/30 bg-emerald-300/10 p-4">
-              <div className="flex items-center gap-2 text-sm uppercase tracking-[0.25em] text-emerald-100/70">
-                <Target className="size-4" />
-                Upcoming numbers
-              </div>
-              <p className="mt-3 text-2xl font-semibold text-white">
-                {cnNumberList(data.participation.upcomingDrawNumbers)}
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                {formatMonthLabel(data.participation.upcomingDrawMonth)}
-              </p>
-            </div>
+            </CardContent>
           </Card>
         </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[0.95fr_1.05fr]">
-        <Card title="Profile and settings" eyebrow="Registered Subscriber">
-          <div className="space-y-4">
+        <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <CardHeader>
+            <CardDescription className="text-xs uppercase tracking-[0.3em]">
+              Registered Subscriber
+            </CardDescription>
+            <CardTitle>Profile and settings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
-              <input
+              <Input
                 value={profileName || data.viewer.name}
                 onChange={(event) => setProfileName(event.target.value)}
                 placeholder="Full name"
-                className="rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none"
+                className="bg-background/70 text-foreground"
               />
-              <input
+              <Input
                 value={profileEmail || data.viewer.email}
                 onChange={(event) => setProfileEmail(event.target.value)}
                 placeholder="Email"
-                className="rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none"
+                className="bg-background/70 text-foreground"
               />
-              <input
+              <Input
                 value={profileCity || data.viewer.city}
                 onChange={(event) => setProfileCity(event.target.value)}
                 placeholder="City"
-                className="rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none sm:col-span-2"
+                className="bg-background/70 text-foreground sm:col-span-2"
               />
             </div>
-            <textarea
+            <Textarea
               value={profileBio || data.viewer.bio || ""}
               onChange={(event) => setProfileBio(event.target.value)}
               rows={4}
               placeholder="Bio"
-              className="w-full rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none"
+              className="bg-background/70 text-foreground"
             />
             <div className="grid gap-3 sm:grid-cols-3">
-              <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/6 px-3 py-3 text-sm text-white/75">
+              <label className="bg-background/40 flex items-center gap-3 rounded-xl border border-white/10 px-3 py-3 text-sm">
                 <input
                   type="checkbox"
                   checked={drawAlerts}
@@ -415,7 +418,7 @@ export function DashboardClient() {
                 />
                 Draw alerts
               </label>
-              <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/6 px-3 py-3 text-sm text-white/75">
+              <label className="bg-background/40 flex items-center gap-3 rounded-xl border border-white/10 px-3 py-3 text-sm">
                 <input
                   type="checkbox"
                   checked={winnerAlerts}
@@ -423,7 +426,7 @@ export function DashboardClient() {
                 />
                 Winner alerts
               </label>
-              <label className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/6 px-3 py-3 text-sm text-white/75">
+              <label className="bg-background/40 flex items-center gap-3 rounded-xl border border-white/10 px-3 py-3 text-sm">
                 <input
                   type="checkbox"
                   checked={marketingEmails}
@@ -448,137 +451,205 @@ export function DashboardClient() {
                   }),
                 )
               }
-              className="h-11 w-full rounded-2xl bg-emerald-400 text-emerald-950 hover:bg-emerald-300"
+              className="h-11 w-full"
             >
               Save profile settings
             </Button>
-          </div>
+          </CardContent>
         </Card>
 
-        <Card title="Subscription and billing" eyebrow="Better Auth + Polar">
-          <div className="space-y-4">
-            <div className="rounded-3xl border border-white/8 bg-white/[0.04] p-4">
-              <p className="text-sm text-white/55">Authenticated billing status</p>
-              <p className="mt-2 text-2xl font-semibold text-white">
+        <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <CardHeader>
+            <CardDescription className="text-xs uppercase tracking-[0.3em]">
+              Better Auth + Polar
+            </CardDescription>
+            <CardTitle>Subscription and billing</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-background/40 rounded-xl border border-white/8 p-4">
+              <p className="text-muted-foreground text-sm">Authenticated billing status</p>
+              <p className="mt-2 text-2xl font-semibold">
                 {sessionPending
                   ? "Checking session..."
                   : session?.user
                     ? `Signed in as ${session.user.email}`
                     : "No authenticated account"}
               </p>
-              <p className="mt-2 text-sm text-white/60">
+              <p className="text-muted-foreground mt-2 text-sm">
                 The live checkout flow uses Better Auth with the Polar plugin and requires an authenticated user.
               </p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
-              <Button
-                disabled={isPending}
-                onClick={() => handlePolarCheckout("golf-charity")}
-                className="h-11 rounded-2xl bg-white text-slate-950 hover:bg-white/90"
+              <div
+                className={`rounded-xl border p-4 ${
+                  data.subscription.plan === "monthly"
+                    ? "border-emerald-300/40 bg-emerald-300/10"
+                    : "bg-background/40 border-white/8"
+                }`}
               >
-                Start monthly checkout
-              </Button>
-              <Button
-                disabled={isPending}
-                onClick={() => handlePolarCheckout("golf-charity-yearly")}
-                variant="outline"
-                className="h-11 rounded-2xl border-white/15 bg-transparent text-white hover:bg-white/8"
+                <p className="text-muted-foreground text-sm uppercase tracking-[0.25em]">
+                  Monthly
+                </p>
+                <p className="mt-2 text-3xl font-semibold">
+                  {formatCurrency(data.billing.plans.monthlyPriceCents)}
+                </p>
+                <p className="text-muted-foreground mt-2 text-sm">Flexible monthly renewal.</p>
+                <Button
+                  disabled={isPending}
+                  onClick={() => handlePolarCheckout("golf-charity")}
+                  className="mt-4 h-11 w-full"
+                >
+                  {data.subscription.plan === "monthly"
+                    ? "Renew monthly in Polar"
+                    : "Switch to monthly"}
+                </Button>
+              </div>
+              <div
+                className={`rounded-xl border p-4 ${
+                  data.subscription.plan === "yearly"
+                    ? "border-emerald-300/40 bg-emerald-300/10"
+                    : "bg-background/40 border-white/8"
+                }`}
               >
-                Start yearly checkout
-              </Button>
+                <p className="text-muted-foreground text-sm uppercase tracking-[0.25em]">
+                  Yearly
+                </p>
+                <p className="mt-2 text-3xl font-semibold">
+                  {formatCurrency(data.billing.plans.yearlyPriceCents)}
+                </p>
+                <p className="text-muted-foreground mt-2 text-sm">
+                  Discounted annual commitment.
+                </p>
+                <Button
+                  disabled={isPending}
+                  onClick={() => handlePolarCheckout("golf-charity-yearly")}
+                  variant="outline"
+                  className="mt-4 h-11 w-full border-white/15 bg-transparent hover:bg-white/8"
+                >
+                  {data.subscription.plan === "yearly"
+                    ? "Renew yearly in Polar"
+                    : "Switch to yearly"}
+                </Button>
+              </div>
+            </div>
+            <div className="rounded-xl border border-amber-300/25 bg-amber-300/10 p-4">
+              <p className="text-sm font-medium text-amber-100">Sandbox retry tip</p>
+              <p className="mt-2 text-sm leading-6 text-white/70">
+                If Polar says the customer external ID cannot be updated, that email already belongs to an older Polar customer. Use a fresh test email or delete that sandbox customer before retrying checkout.
+              </p>
             </div>
             <Button
               disabled={isPending || !session?.user}
               onClick={handlePortal}
-              className="h-11 w-full rounded-2xl bg-emerald-300 text-emerald-950 hover:bg-emerald-200"
+              className="h-11 w-full"
             >
               Open customer portal
             </Button>
+            <div className="bg-background/40 rounded-xl border border-white/10 px-4 py-3 text-sm">
+              Current plan:{" "}
+              <span className="font-medium capitalize">{data.subscription.plan}</span>
+              {" | "}Status:{" "}
+              <span className="font-medium capitalize">{data.subscription.status}</span>
+            </div>
             {!session?.user ? (
               <Link
                 href="/auth"
-                className="inline-flex text-sm font-medium text-emerald-200 underline underline-offset-4"
+                className="inline-flex text-sm font-medium underline underline-offset-4"
               >
                 Sign in or create account
               </Link>
             ) : null}
-          </div>
+          </CardContent>
         </Card>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <Card title="Draw history" eyebrow="Performance">
-          <div className="space-y-3">
+        <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <CardHeader>
+            <CardDescription className="text-xs uppercase tracking-[0.3em]">
+              Performance
+            </CardDescription>
+            <CardTitle>Draw history</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
             {data.recentDraws.map((draw) => (
               <div
                 key={draw.id}
-                className="rounded-3xl border border-white/8 bg-white/[0.04] p-4"
+                className="bg-background/40 rounded-xl border border-white/8 p-4"
               >
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.25em] text-white/45">
+                    <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
                       {formatMonthLabel(draw.month)}
                     </p>
-                    <p className="mt-2 text-lg font-semibold text-white">
+                    <p className="mt-2 text-lg font-semibold">
                       {draw.status === "published"
                         ? cnNumberList(draw.numbers)
                         : cnNumberList(draw.simulatedNumbers)}
                     </p>
                   </div>
-                  <div className="text-sm text-white/65">
+                  <div className="text-muted-foreground text-sm">
                     {draw.result
-                      ? `${draw.result.matchCount} matches · ${formatCurrency(draw.result.amountCents)}`
+                      ? `${draw.result.matchCount} matches | ${formatCurrency(draw.result.amountCents)}`
                       : "No win recorded"}
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </CardContent>
         </Card>
 
-        <Card title="Winner verification" eyebrow="Proof Upload">
-          {pendingProof ? (
-            <div className="space-y-4">
-              <div className="rounded-3xl border border-white/8 bg-white/[0.04] p-4">
-                <p className="text-xs uppercase tracking-[0.25em] text-white/45">
-                  {formatMonthLabel(pendingProof.month)}
-                </p>
-                <p className="mt-2 text-xl font-semibold text-white">
-                  {pendingProof.result?.matchCount} matches for{" "}
-                  {formatCurrency(pendingProof.result?.amountCents ?? 0)}
-                </p>
-                <p className="mt-2 text-sm text-white/60">
-                  Current review state:{" "}
-                  <span className="capitalize">{pendingProof.result?.proofStatus}</span>
-                </p>
+        <Card className="bg-card/60 border-white/10 text-card-foreground">
+          <CardHeader>
+            <CardDescription className="text-xs uppercase tracking-[0.3em]">
+              Proof Upload
+            </CardDescription>
+            <CardTitle>Winner verification</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {pendingProof ? (
+              <div className="space-y-4">
+                <div className="bg-background/40 rounded-xl border border-white/8 p-4">
+                  <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
+                    {formatMonthLabel(pendingProof.month)}
+                  </p>
+                  <p className="mt-2 text-xl font-semibold">
+                    {pendingProof.result?.matchCount} matches for{" "}
+                    {formatCurrency(pendingProof.result?.amountCents ?? 0)}
+                  </p>
+                  <p className="text-muted-foreground mt-2 text-sm">
+                    Current review state:{" "}
+                    <span className="capitalize">{pendingProof.result?.proofStatus}</span>
+                  </p>
+                </div>
+                <Input
+                  value={proofUrl}
+                  onChange={(event) => setProofUrl(event.target.value)}
+                  placeholder="https://proof-link.example"
+                  className="bg-background/70 text-foreground"
+                />
+                <Button
+                  disabled={isPending || !proofUrl}
+                  onClick={() =>
+                    runAction(() =>
+                      submitWinnerProofAction({
+                        drawId: pendingProof.id,
+                        userId: data.viewer.id,
+                        proofUrl,
+                      }),
+                    )
+                  }
+                  className="h-11 w-full"
+                >
+                  Submit proof
+                </Button>
               </div>
-              <input
-                value={proofUrl}
-                onChange={(event) => setProofUrl(event.target.value)}
-                placeholder="https://proof-link.example"
-                className="w-full rounded-2xl border border-white/10 bg-white/8 px-3 py-3 text-white outline-none"
-              />
-              <Button
-                disabled={isPending || !proofUrl}
-                onClick={() =>
-                  runAction(() =>
-                    submitWinnerProofAction({
-                      drawId: pendingProof.id,
-                      userId: data.viewer.id,
-                      proofUrl,
-                    }),
-                  )
-                }
-                className="h-11 w-full rounded-2xl bg-amber-300 text-slate-950 hover:bg-amber-200"
-              >
-                Submit proof
-              </Button>
-            </div>
-          ) : (
-            <p className="text-sm leading-6 text-white/65">
-              No winner proof is needed right now. If you land in a payout tier, this panel will open automatically.
-            </p>
-          )}
+            ) : (
+              <p className="text-muted-foreground text-sm leading-6">
+                No winner proof is needed right now. If you land in a payout tier, this panel will open automatically.
+              </p>
+            )}
+          </CardContent>
         </Card>
       </div>
     </div>
