@@ -114,6 +114,75 @@ function getUserOrThrow(store: PlatformStore, userId: string) {
   return user
 }
 
+function getUserByEmail(store: PlatformStore, email: string) {
+  return store.users.find(
+    (entry) => entry.email.toLowerCase() === email.toLowerCase(),
+  )
+}
+
+function buildPlatformUserFromAuthProfile(
+  store: PlatformStore,
+  input: {
+    authUserId: string
+    name: string
+    email: string
+  },
+): PlatformUser {
+  const defaultCharity = store.charities.find((charity) => charity.featured) ?? store.charities[0]
+  const today = new Date().toISOString().slice(0, 10)
+
+  return {
+    id: input.authUserId,
+    name: input.name,
+    email: input.email,
+    city: "",
+    role: "subscriber",
+    charityId: defaultCharity.id,
+    bio: "",
+    preferences: {
+      drawAlerts: true,
+      winnerAlerts: true,
+      marketingEmails: false,
+    },
+    subscription: {
+      plan: "monthly",
+      status: "inactive",
+      startedAt: today,
+      renewsAt: today,
+      amountCents: store.meta.monthlyPriceCents,
+      charityPercent: store.meta.minimumCharityPercent,
+      polarCustomerId: null,
+      polarSubscriptionId: null,
+      polarCheckoutId: null,
+      polarProductId: null,
+      latestOrderId: null,
+    },
+    scores: [],
+  }
+}
+
+function upsertPlatformUserFromAuthProfile(
+  store: PlatformStore,
+  input: {
+    authUserId: string
+    name: string
+    email: string
+  },
+) {
+  const existingUser = getUserByEmail(store, input.email)
+
+  if (existingUser) {
+    ensureUserDefaults(existingUser)
+    existingUser.name = input.name
+    existingUser.email = input.email
+    return existingUser
+  }
+
+  const createdUser = buildPlatformUserFromAuthProfile(store, input)
+  store.users.push(createdUser)
+  return createdUser
+}
+
 function getDrawOrThrow(store: PlatformStore, drawId: string) {
   const draw = store.draws.find((entry) => entry.id === drawId)
   if (!draw) {
@@ -374,6 +443,37 @@ export async function getDashboardSnapshot(userId: string): Promise<DashboardSna
       },
     },
   }
+}
+
+export async function getOrCreateDashboardSnapshotForAuthUser(input: {
+  authUserId: string
+  name: string
+  email: string
+}): Promise<DashboardSnapshot> {
+  const store = await readPlatformStore()
+  const user = upsertPlatformUserFromAuthProfile(store, input)
+  await writePlatformStore(store)
+  return getDashboardSnapshot(user.id)
+}
+
+export async function syncAuthUsersToPlatformStore(
+  authUsers: Array<{
+    id: string
+    name: string
+    email: string
+  }>,
+) {
+  const store = await readPlatformStore()
+
+  for (const authUser of authUsers) {
+    upsertPlatformUserFromAuthProfile(store, {
+      authUserId: authUser.id,
+      name: authUser.name,
+      email: authUser.email,
+    })
+  }
+
+  await writePlatformStore(store)
 }
 
 export async function getAdminSnapshot(): Promise<AdminSnapshot> {

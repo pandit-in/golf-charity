@@ -269,6 +269,34 @@
           "value": 20
         }
       ]
+    },
+    {
+      "id": "6VSeGRqI6diapQ3e5KoORpqJqZQEf4gJ",
+      "name": "Pandit",
+      "email": "iampandit.in@gmail.com",
+      "city": "Jalna",
+      "role": "subscriber",
+      "charityId": "charity-bright-future",
+      "bio": "i thrive to make this world peaceful",
+      "preferences": {
+        "drawAlerts": true,
+        "winnerAlerts": true,
+        "marketingEmails": false
+      },
+      "subscription": {
+        "plan": "monthly",
+        "status": "inactive",
+        "startedAt": "2026-03-29",
+        "renewsAt": "2026-03-29",
+        "amountCents": 2900,
+        "charityPercent": 10,
+        "polarCustomerId": null,
+        "polarSubscriptionId": null,
+        "polarCheckoutId": null,
+        "polarProductId": null,
+        "latestOrderId": null
+      },
+      "scores": []
     }
   ],
   "draws": [
@@ -319,11 +347,11 @@
       "logic": "weighted",
       "numbers": null,
       "simulatedNumbers": [
-        19,
-        27,
-        29,
-        34,
-        35
+        14,
+        21,
+        28,
+        35,
+        44
       ],
       "publishedAt": null,
       "jackpotRolloverCents": 0,

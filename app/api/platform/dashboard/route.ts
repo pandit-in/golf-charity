@@ -1,9 +1,23 @@
-import { NextRequest, NextResponse } from "next/server"
+import { headers } from "next/headers"
+import { NextResponse } from "next/server"
 
-import { getDashboardSnapshot } from "@/lib/platform/service"
+import { auth } from "@/lib/auth"
+import { getOrCreateDashboardSnapshotForAuthUser } from "@/lib/platform/service"
 
-export async function GET(request: NextRequest) {
-  const userId = request.nextUrl.searchParams.get("userId") ?? "user-avery"
-  const data = await getDashboardSnapshot(userId)
+export async function GET() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  })
+
+  if (!session?.user) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 })
+  }
+
+  const data = await getOrCreateDashboardSnapshotForAuthUser({
+    authUserId: session.user.id,
+    name: session.user.name,
+    email: session.user.email,
+  })
+
   return NextResponse.json(data)
 }

@@ -12,6 +12,13 @@ import { useState, useTransition } from "react"
 
 import { Button } from "@/components/ui/button"
 import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
+import {
   adminUpdateUserAction,
   createCharityAction,
   markWinnerPaidAction,
@@ -34,18 +41,27 @@ async function getAdminData() {
   return (await response.json()) as AdminSnapshot
 }
 
+function inputClassName() {
+  return "border-input bg-background ring-offset-background focus-visible:ring-ring w-full rounded-md border px-3 py-2.5 text-sm outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+}
+
 function AdminCard({
   title,
+  description,
   children,
 }: {
   title: string
+  description?: string
   children: React.ReactNode
 }) {
   return (
-    <section className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_20px_70px_rgba(15,23,42,0.08)]">
-      <h2 className="text-xl font-semibold text-slate-950">{title}</h2>
-      <div className="mt-5">{children}</div>
-    </section>
+    <Card>
+      <CardHeader>
+        <CardTitle>{title}</CardTitle>
+        {description ? <CardDescription>{description}</CardDescription> : null}
+      </CardHeader>
+      <CardContent>{children}</CardContent>
+    </Card>
   )
 }
 
@@ -82,7 +98,7 @@ export function AdminClient() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-slate-500">
+      <div className="text-muted-foreground flex min-h-[50vh] items-center justify-center">
         <LoaderCircle className="size-5 animate-spin" />
       </div>
     )
@@ -90,7 +106,7 @@ export function AdminClient() {
 
   if (isError || !data) {
     return (
-      <div className="rounded-3xl border border-red-200 bg-red-50 p-6 text-red-700">
+      <div className="rounded-xl border border-red-200 bg-red-50 p-6 text-red-700">
         Admin dashboard failed to load.
       </div>
     )
@@ -98,7 +114,7 @@ export function AdminClient() {
 
   async function refresh() {
     await queryClient.invalidateQueries({ queryKey: ["platform-admin"] })
-    await queryClient.invalidateQueries({ queryKey: ["platform-dashboard", "user-avery"] })
+    await queryClient.invalidateQueries({ queryKey: ["platform-dashboard"] })
   }
 
   function runAction(callback: () => Promise<{ ok: boolean; message: string }>) {
@@ -113,136 +129,153 @@ export function AdminClient() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-[36px] border border-slate-200 bg-[linear-gradient(135deg,#fffaf0,#f8fafc_35%,#eefbf5)] p-8">
-        <p className="text-xs uppercase tracking-[0.35em] text-slate-500">Admin Control Room</p>
-        <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <h1 className="text-4xl font-semibold tracking-tight text-slate-950">
+      <Card>
+        <CardHeader className="gap-4">
+          <div className="max-w-2xl space-y-3">
+            <CardDescription className="text-xs uppercase tracking-[0.35em]">
+              Admin Control Room
+            </CardDescription>
+            <CardTitle className="text-4xl tracking-tight">
               Operate subscription growth, draws, and payout review from one place.
-            </h1>
-            <p className="mt-3 text-slate-600">
-              This admin layer now includes editable subscriber and subscription controls, draw operations, charity management, and payout review.
-            </p>
+            </CardTitle>
+            <CardDescription className="text-base leading-7">
+              This admin layer includes editable subscriber controls, draw operations,
+              charity management, and payout review.
+            </CardDescription>
           </div>
+        </CardHeader>
+        <CardContent>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Users className="size-4" /> Users
-              </div>
-              <p className="mt-2 text-3xl font-semibold text-slate-950">
-                {data.analytics.totalUsers}
-              </p>
-            </div>
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <Sparkles className="size-4" /> Active
-              </div>
-              <p className="mt-2 text-3xl font-semibold text-slate-950">
-                {data.analytics.activeSubscribers}
-              </p>
-            </div>
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <CircleDollarSign className="size-4" /> Prize pool
-              </div>
-              <p className="mt-2 text-3xl font-semibold text-slate-950">
-                {formatCurrency(data.analytics.totalPrizePoolCents)}
-              </p>
-            </div>
-            <div className="rounded-3xl bg-white p-4 shadow-sm">
-              <div className="flex items-center gap-2 text-sm text-slate-500">
-                <BarChart3 className="size-4" /> Charity
-              </div>
-              <p className="mt-2 text-3xl font-semibold text-slate-950">
-                {formatCurrency(data.analytics.totalCharityCents)}
-              </p>
-            </div>
+            <Card className="shadow-none">
+              <CardContent className="p-4">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Users className="size-4" /> Users
+                </div>
+                <p className="mt-2 text-3xl font-semibold">{data.analytics.totalUsers}</p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-none">
+              <CardContent className="p-4">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <Sparkles className="size-4" /> Active
+                </div>
+                <p className="mt-2 text-3xl font-semibold">
+                  {data.analytics.activeSubscribers}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-none">
+              <CardContent className="p-4">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <CircleDollarSign className="size-4" /> Prize pool
+                </div>
+                <p className="mt-2 text-3xl font-semibold">
+                  {formatCurrency(data.analytics.totalPrizePoolCents)}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="shadow-none">
+              <CardContent className="p-4">
+                <div className="text-muted-foreground flex items-center gap-2 text-sm">
+                  <BarChart3 className="size-4" /> Charity
+                </div>
+                <p className="mt-2 text-3xl font-semibold">
+                  {formatCurrency(data.analytics.totalCharityCents)}
+                </p>
+              </CardContent>
+            </Card>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
 
       {message ? (
-        <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
-          {message}
-        </div>
+        <Card>
+          <CardContent className="px-4 py-3 text-sm text-muted-foreground">
+            {message}
+          </CardContent>
+        </Card>
       ) : null}
 
       <div className="grid gap-6 xl:grid-cols-[1.1fr_0.9fr]">
-        <AdminCard title="Draw management">
+        <AdminCard
+          title="Draw management"
+          description="Simulate and publish monthly draws from the admin console."
+        >
           <div className="space-y-4">
             {data.draws.map((draw) => {
               const logic = logicByDraw[draw.id] ?? draw.logic
               return (
-                <div
-                  key={draw.id}
-                  className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
-                >
-                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                      <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
-                        {formatMonthLabel(draw.month)}
-                      </p>
-                      <p className="mt-2 text-lg font-semibold text-slate-950">
-                        {draw.status === "published"
-                          ? cnNumberList(draw.numbers)
-                          : cnNumberList(draw.simulatedNumbers)}
-                      </p>
-                      <p className="mt-1 text-sm text-slate-500">
-                        Jackpot rollover {formatCurrency(draw.jackpotRolloverCents)}
-                      </p>
+                <Card key={draw.id} className="bg-muted/40 shadow-none">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                      <div>
+                        <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
+                          {formatMonthLabel(draw.month)}
+                        </p>
+                        <p className="mt-2 text-lg font-semibold">
+                          {draw.status === "published"
+                            ? cnNumberList(draw.numbers)
+                            : cnNumberList(draw.simulatedNumbers)}
+                        </p>
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          Jackpot rollover {formatCurrency(draw.jackpotRolloverCents)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <select
+                          value={logic}
+                          onChange={(event) =>
+                            setLogicByDraw((current) => ({
+                              ...current,
+                              [draw.id]: event.target.value as DrawLogic,
+                            }))
+                          }
+                          className={inputClassName()}
+                        >
+                          <option value="weighted">Weighted</option>
+                          <option value="random">Random</option>
+                        </select>
+                        {draw.status === "draft" ? (
+                          <>
+                            <Button
+                              disabled={isPending}
+                              variant="outline"
+                              onClick={() =>
+                                runAction(() =>
+                                  simulateDrawAction({
+                                    drawId: draw.id,
+                                    logic,
+                                  }),
+                                )
+                              }
+                            >
+                              Simulate
+                            </Button>
+                            <Button
+                              disabled={isPending}
+                              onClick={() => runAction(() => publishDrawAction(draw.id))}
+                            >
+                              Publish
+                            </Button>
+                          </>
+                        ) : (
+                          <span className="bg-secondary text-secondary-foreground inline-flex items-center rounded-md px-3 py-2 text-sm font-medium">
+                            Published
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <div className="flex flex-col gap-2 sm:flex-row">
-                      <select
-                        value={logic}
-                        onChange={(event) =>
-                          setLogicByDraw((current) => ({
-                            ...current,
-                            [draw.id]: event.target.value as DrawLogic,
-                          }))
-                        }
-                        className="rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 outline-none"
-                      >
-                        <option value="weighted">Weighted</option>
-                        <option value="random">Random</option>
-                      </select>
-                      {draw.status === "draft" ? (
-                        <>
-                          <Button
-                            disabled={isPending}
-                            variant="outline"
-                            onClick={() =>
-                              runAction(() =>
-                                simulateDrawAction({
-                                  drawId: draw.id,
-                                  logic,
-                                }),
-                              )
-                            }
-                          >
-                            Simulate
-                          </Button>
-                          <Button
-                            disabled={isPending}
-                            onClick={() => runAction(() => publishDrawAction(draw.id))}
-                            className="bg-slate-950 text-white hover:bg-slate-800"
-                          >
-                            Publish
-                          </Button>
-                        </>
-                      ) : (
-                        <span className="inline-flex items-center rounded-full bg-emerald-100 px-3 py-2 text-sm font-medium text-emerald-800">
-                          Published
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>
         </AdminCard>
 
-        <AdminCard title="Charity management">
+        <AdminCard
+          title="Charity management"
+          description="Add charities and review the current directory."
+        >
           <div className="space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
               <input
@@ -251,7 +284,7 @@ export function AdminClient() {
                   setCharityForm((current) => ({ ...current, name: event.target.value }))
                 }
                 placeholder="Charity name"
-                className="rounded-2xl border border-slate-200 px-3 py-2.5 outline-none"
+                className={inputClassName()}
               />
               <input
                 value={charityForm.location}
@@ -262,7 +295,7 @@ export function AdminClient() {
                   }))
                 }
                 placeholder="Location"
-                className="rounded-2xl border border-slate-200 px-3 py-2.5 outline-none"
+                className={inputClassName()}
               />
             </div>
             <textarea
@@ -275,7 +308,7 @@ export function AdminClient() {
               }
               placeholder="Description"
               rows={4}
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2.5 outline-none"
+              className={inputClassName()}
             />
             <div className="grid gap-3 sm:grid-cols-2">
               <input
@@ -287,7 +320,7 @@ export function AdminClient() {
                   }))
                 }
                 placeholder="Upcoming event"
-                className="rounded-2xl border border-slate-200 px-3 py-2.5 outline-none"
+                className={inputClassName()}
               />
               <input
                 value={charityForm.tags}
@@ -295,7 +328,7 @@ export function AdminClient() {
                   setCharityForm((current) => ({ ...current, tags: event.target.value }))
                 }
                 placeholder="Tags, comma separated"
-                className="rounded-2xl border border-slate-200 px-3 py-2.5 outline-none"
+                className={inputClassName()}
               />
             </div>
             <input
@@ -304,7 +337,7 @@ export function AdminClient() {
                 setCharityForm((current) => ({ ...current, image: event.target.value }))
               }
               placeholder="Image URL"
-              className="w-full rounded-2xl border border-slate-200 px-3 py-2.5 outline-none"
+              className={inputClassName()}
             />
             <Button
               disabled={isPending}
@@ -324,19 +357,18 @@ export function AdminClient() {
                   return result
                 })
               }
-              className="h-11 w-full bg-emerald-500 text-emerald-950 hover:bg-emerald-400"
+              className="h-11 w-full"
             >
               Add charity
             </Button>
             <div className="space-y-3">
               {data.charities.map((charity) => (
-                <div
-                  key={charity.id}
-                  className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
-                >
-                  <p className="text-lg font-semibold text-slate-950">{charity.name}</p>
-                  <p className="mt-1 text-sm text-slate-600">{charity.location}</p>
-                </div>
+                <Card key={charity.id} className="bg-muted/40 shadow-none">
+                  <CardContent className="p-4">
+                    <p className="text-lg font-semibold">{charity.name}</p>
+                    <p className="text-muted-foreground mt-1 text-sm">{charity.location}</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
           </div>
@@ -344,7 +376,10 @@ export function AdminClient() {
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1fr_1fr]">
-        <AdminCard title="Subscriber management">
+        <AdminCard
+          title="Subscriber management"
+          description="Review subscriber details, billing status, and donation settings."
+        >
           <div className="space-y-3">
             {data.users.map((user) => {
               const draft = userDrafts[user.id] ?? {
@@ -356,184 +391,187 @@ export function AdminClient() {
               }
 
               return (
-                <div
-                  key={user.id}
-                  className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
-                >
-                  <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                    <div>
-                      <p className="font-semibold text-slate-950">{user.email}</p>
-                      <p className="mt-1 text-sm text-slate-500">
-                        {user.charityName} · latest score {user.latestScore ?? "—"} ·{" "}
-                        {user.polarLinked ? "Polar linked" : "No Polar link"}
-                      </p>
+                <Card key={user.id} className="bg-muted/40 shadow-none">
+                  <CardContent className="p-4">
+                    <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                      <div>
+                        <p className="font-semibold">{user.email}</p>
+                        <p className="text-muted-foreground mt-1 text-sm">
+                          {user.charityName} · latest score {user.latestScore ?? "—"} ·{" "}
+                          {user.polarLinked ? "Polar linked" : "No Polar link"}
+                        </p>
+                      </div>
+                      <Button
+                        disabled={isPending}
+                        onClick={() =>
+                          runAction(() =>
+                            adminUpdateUserAction({
+                              userId: user.id,
+                              name: draft.name,
+                              city: draft.city,
+                              plan: draft.plan,
+                              subscriptionStatus: draft.subscriptionStatus,
+                              charityPercent: Number(draft.charityPercent),
+                            }),
+                          )
+                        }
+                      >
+                        Save subscriber
+                      </Button>
                     </div>
-                    <Button
-                      disabled={isPending}
-                      onClick={() =>
-                        runAction(() =>
-                          adminUpdateUserAction({
-                            userId: user.id,
-                            name: draft.name,
-                            city: draft.city,
-                            plan: draft.plan,
-                            subscriptionStatus: draft.subscriptionStatus,
-                            charityPercent: Number(draft.charityPercent),
-                          }),
-                        )
-                      }
-                    >
-                      Save subscriber
-                    </Button>
-                  </div>
-                  <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-                    <input
-                      value={draft.name}
-                      onChange={(event) =>
-                        setUserDrafts((current) => ({
-                          ...current,
-                          [user.id]: { ...draft, name: event.target.value },
-                        }))
-                      }
-                      className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 outline-none"
-                    />
-                    <input
-                      value={draft.city}
-                      onChange={(event) =>
-                        setUserDrafts((current) => ({
-                          ...current,
-                          [user.id]: { ...draft, city: event.target.value },
-                        }))
-                      }
-                      className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 outline-none"
-                    />
-                    <select
-                      value={draft.plan}
-                      onChange={(event) =>
-                        setUserDrafts((current) => ({
-                          ...current,
-                          [user.id]: {
-                            ...draft,
-                            plan: event.target.value as "monthly" | "yearly",
-                          },
-                        }))
-                      }
-                      className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 outline-none"
-                    >
-                      <option value="monthly">Monthly</option>
-                      <option value="yearly">Yearly</option>
-                    </select>
-                    <select
-                      value={draft.subscriptionStatus}
-                      onChange={(event) =>
-                        setUserDrafts((current) => ({
-                          ...current,
-                          [user.id]: {
-                            ...draft,
-                            subscriptionStatus: event.target.value as
-                              | "active"
-                              | "inactive"
-                              | "lapsed",
-                          },
-                        }))
-                      }
-                      className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 outline-none"
-                    >
-                      <option value="active">Active</option>
-                      <option value="inactive">Inactive</option>
-                      <option value="lapsed">Lapsed</option>
-                    </select>
-                    <input
-                      value={draft.charityPercent}
-                      onChange={(event) =>
-                        setUserDrafts((current) => ({
-                          ...current,
-                          [user.id]: {
-                            ...draft,
-                            charityPercent: event.target.value,
-                          },
-                        }))
-                      }
-                      type="number"
-                      min={10}
-                      max={100}
-                      className="rounded-2xl border border-slate-200 bg-white px-3 py-2.5 outline-none"
-                    />
-                  </div>
-                </div>
+                    <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
+                      <input
+                        value={draft.name}
+                        onChange={(event) =>
+                          setUserDrafts((current) => ({
+                            ...current,
+                            [user.id]: { ...draft, name: event.target.value },
+                          }))
+                        }
+                        className={inputClassName()}
+                      />
+                      <input
+                        value={draft.city}
+                        onChange={(event) =>
+                          setUserDrafts((current) => ({
+                            ...current,
+                            [user.id]: { ...draft, city: event.target.value },
+                          }))
+                        }
+                        className={inputClassName()}
+                      />
+                      <select
+                        value={draft.plan}
+                        onChange={(event) =>
+                          setUserDrafts((current) => ({
+                            ...current,
+                            [user.id]: {
+                              ...draft,
+                              plan: event.target.value as "monthly" | "yearly",
+                            },
+                          }))
+                        }
+                        className={inputClassName()}
+                      >
+                        <option value="monthly">Monthly</option>
+                        <option value="yearly">Yearly</option>
+                      </select>
+                      <select
+                        value={draft.subscriptionStatus}
+                        onChange={(event) =>
+                          setUserDrafts((current) => ({
+                            ...current,
+                            [user.id]: {
+                              ...draft,
+                              subscriptionStatus: event.target.value as
+                                | "active"
+                                | "inactive"
+                                | "lapsed",
+                            },
+                          }))
+                        }
+                        className={inputClassName()}
+                      >
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="lapsed">Lapsed</option>
+                      </select>
+                      <input
+                        value={draft.charityPercent}
+                        onChange={(event) =>
+                          setUserDrafts((current) => ({
+                            ...current,
+                            [user.id]: {
+                              ...draft,
+                              charityPercent: event.target.value,
+                            },
+                          }))
+                        }
+                        type="number"
+                        min={10}
+                        max={100}
+                        className={inputClassName()}
+                      />
+                    </div>
+                  </CardContent>
+                </Card>
               )
             })}
           </div>
         </AdminCard>
 
-        <AdminCard title="Winner verification and payouts">
+        <AdminCard
+          title="Winner verification and payouts"
+          description="Approve proofs and close payouts for published draws."
+        >
           <div className="space-y-3">
             {data.winnerReviews.map((winner) => (
-              <div
+              <Card
                 key={`${winner.drawId}-${winner.userId}`}
-                className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
+                className="bg-muted/40 shadow-none"
               >
-                <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                  <div>
-                    <p className="text-xs uppercase tracking-[0.25em] text-slate-400">
-                      {formatMonthLabel(winner.drawMonth)}
-                    </p>
-                    <p className="mt-2 text-lg font-semibold text-slate-950">
-                      {winner.userName} · {winner.matchCount} matches
-                    </p>
-                    <p className="mt-1 text-sm text-slate-600">
-                      {formatCurrency(winner.amountCents)} · proof {winner.proofStatus} ·
-                      payout {winner.paymentStatus}
-                    </p>
+                <CardContent className="p-4">
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                      <p className="text-muted-foreground text-xs uppercase tracking-[0.25em]">
+                        {formatMonthLabel(winner.drawMonth)}
+                      </p>
+                      <p className="mt-2 text-lg font-semibold">
+                        {winner.userName} · {winner.matchCount} matches
+                      </p>
+                      <p className="text-muted-foreground mt-1 text-sm">
+                        {formatCurrency(winner.amountCents)} · proof {winner.proofStatus} · payout{" "}
+                        {winner.paymentStatus}
+                      </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        disabled={isPending}
+                        variant="outline"
+                        onClick={() =>
+                          runAction(() =>
+                            reviewWinnerAction({
+                              drawId: winner.drawId,
+                              userId: winner.userId,
+                              decision: "approved",
+                            }),
+                          )
+                        }
+                      >
+                        Approve
+                      </Button>
+                      <Button
+                        disabled={isPending}
+                        variant="outline"
+                        onClick={() =>
+                          runAction(() =>
+                            reviewWinnerAction({
+                              drawId: winner.drawId,
+                              userId: winner.userId,
+                              decision: "rejected",
+                            }),
+                          )
+                        }
+                      >
+                        Reject
+                      </Button>
+                      <Button
+                        disabled={isPending || winner.paymentStatus === "paid"}
+                        onClick={() =>
+                          runAction(() =>
+                            markWinnerPaidAction({
+                              drawId: winner.drawId,
+                              userId: winner.userId,
+                            }),
+                          )
+                        }
+                      >
+                        Mark paid
+                      </Button>
+                    </div>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    <Button
-                      disabled={isPending}
-                      variant="outline"
-                      onClick={() =>
-                        runAction(() =>
-                          reviewWinnerAction({
-                            drawId: winner.drawId,
-                            userId: winner.userId,
-                            decision: "approved",
-                          }),
-                        )
-                      }
-                    >
-                      Approve
-                    </Button>
-                    <Button
-                      disabled={isPending}
-                      variant="outline"
-                      onClick={() =>
-                        runAction(() =>
-                          reviewWinnerAction({
-                            drawId: winner.drawId,
-                            userId: winner.userId,
-                            decision: "rejected",
-                          }),
-                        )
-                      }
-                    >
-                      Reject
-                    </Button>
-                    <Button
-                      disabled={isPending || winner.paymentStatus === "paid"}
-                      onClick={() =>
-                        runAction(() =>
-                          markWinnerPaidAction({
-                            drawId: winner.drawId,
-                            userId: winner.userId,
-                          }),
-                        )
-                      }
-                      className="bg-slate-950 text-white hover:bg-slate-800"
-                    >
-                      Mark paid
-                    </Button>
-                  </div>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
         </AdminCard>

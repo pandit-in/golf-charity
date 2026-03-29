@@ -45,6 +45,37 @@ export function getPolarProductId(plan: PolarPlan) {
     : requiredEnv("POLAR_MONTHLY_PRODUCT_ID")
 }
 
+export async function ensurePolarCustomerForUser(input: {
+  userId: string
+  email: string
+  name?: string | null
+}) {
+  const polar = getPolarClient()
+  const { result } = await polar.customers.list({
+    email: input.email,
+  })
+
+  const existingCustomer = result.items[0]
+
+  if (existingCustomer) {
+    return {
+      customerId: existingCustomer.id,
+      externalCustomerId: existingCustomer.externalId ?? input.userId,
+    }
+  }
+
+  const createdCustomer = await polar.customers.create({
+    email: input.email,
+    name: input.name ?? undefined,
+    externalId: input.userId,
+  })
+
+  return {
+    customerId: createdCustomer.id,
+    externalCustomerId: input.userId,
+  }
+}
+
 export async function createPolarCheckoutUrl(input: {
   name: string
   email: string
@@ -74,6 +105,46 @@ export async function createPolarCheckoutUrl(input: {
   return {
     userId: user.id,
     checkoutUrl: checkout.url,
+  }
+}
+
+export async function createAuthenticatedPolarCheckoutUrl(input: {
+  userId: string
+  email: string
+  name?: string | null
+  plan: PolarPlan
+}) {
+  const polar = getPolarClient()
+  const appUrl = getAppUrl()
+  const productId = getPolarProductId(input.plan)
+  const customer = await ensurePolarCustomerForUser({
+    userId: input.userId,
+    email: input.email,
+    name: input.name,
+  })
+
+  try {
+    const checkout = await polar.checkouts.create({
+      customerId: customer.customerId,
+      products: [productId],
+      successUrl: `${appUrl}/subscribe/success?checkout_id={CHECKOUT_ID}`,
+      returnUrl: appUrl,
+    })
+
+    return {
+      checkoutUrl: checkout.url,
+    }
+  } catch (error) {
+    if (
+      error instanceof Error &&
+      error.message.includes("Product does not exist")
+    ) {
+      throw new Error(
+        `Configured Polar ${input.plan} product ID does not exist in ${getPolarServer()}.`,
+      )
+    }
+
+    throw error
   }
 }
 

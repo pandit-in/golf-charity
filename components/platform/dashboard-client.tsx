@@ -40,7 +40,7 @@ const surfaceClassName = "border-white/10 bg-card/60 text-card-foreground"
 const insetClassName = "rounded-xl border border-white/10 bg-background/50"
 
 async function getDashboardData() {
-  const response = await fetch("/api/platform/dashboard?userId=user-avery")
+  const response = await fetch("/api/platform/dashboard")
   if (!response.ok) {
     throw new Error("Unable to load dashboard")
   }
@@ -63,12 +63,13 @@ export function DashboardClient() {
   const [drawAlerts, setDrawAlerts] = useState(true)
   const [winnerAlerts, setWinnerAlerts] = useState(true)
   const [marketingEmails, setMarketingEmails] = useState(false)
+  const { data: session, isPending: sessionPending } = authClient.useSession()
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["platform-dashboard", "user-avery"],
+    queryKey: ["platform-dashboard", session?.user?.id ?? "anonymous"],
     queryFn: getDashboardData,
+    enabled: Boolean(session?.user),
   })
-  const { data: session, isPending: sessionPending } = authClient.useSession()
 
   const pendingProof = useMemo(
     () =>
@@ -80,6 +81,22 @@ export function DashboardClient() {
       ) ?? null,
     [data],
   )
+
+  if (sessionPending) {
+    return (
+      <div className="flex min-h-[50vh] items-center justify-center text-white/70">
+        <LoaderCircle className="size-5 animate-spin" />
+      </div>
+    )
+  }
+
+  if (!session?.user) {
+    return (
+      <div className="rounded-xl border border-white/10 bg-card/60 p-6 text-white/80">
+        Sign in to view your dashboard.
+      </div>
+    )
+  }
 
   if (isLoading) {
     return (
@@ -98,7 +115,7 @@ export function DashboardClient() {
   }
 
   async function refresh() {
-    await queryClient.invalidateQueries({ queryKey: ["platform-dashboard", "user-avery"] })
+    await queryClient.invalidateQueries({ queryKey: ["platform-dashboard"] })
     await queryClient.invalidateQueries({ queryKey: ["platform-admin"] })
   }
 
@@ -112,26 +129,33 @@ export function DashboardClient() {
     })
   }
 
-  async function handlePolarCheckout(planSlug: "golf-charity" | "golf-charity-yearly") {
+  async function handlePolarCheckout(plan: "monthly" | "yearly") {
     if (!session?.user) {
       setMessage("Sign in first to use the Better Auth + Polar checkout flow.")
       return
     }
 
-    const result = await authClient.checkout({
-      slug: planSlug,
+    const response = await fetch("/api/polar/checkout", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        plan,
+      }),
     })
 
-    if (result.error) {
-      const rawMessage = result.error.message ?? "Unable to open checkout."
-      if (rawMessage.includes("Customer external ID cannot be updated")) {
-        setMessage(
-          "Polar already has this email linked to an older customer record. Use a new sandbox email or delete the old Polar customer before retrying checkout.",
-        )
-        return
-      }
-      setMessage(rawMessage)
+    const result = (await response.json()) as {
+      checkoutUrl?: string
+      message?: string
     }
+
+    if (!response.ok || !result.checkoutUrl) {
+      setMessage(result.message ?? "Unable to open checkout.")
+      return
+    }
+
+    window.location.href = result.checkoutUrl
   }
 
   async function handlePortal() {
@@ -511,7 +535,7 @@ export function DashboardClient() {
                 <p className="text-muted-foreground mt-2 text-sm">Flexible monthly renewal.</p>
                 <Button
                   disabled={isPending}
-                  onClick={() => handlePolarCheckout("golf-charity")}
+                  onClick={() => handlePolarCheckout("monthly")}
                   className="mt-4 h-11 w-full"
                 >
                   {data.subscription.plan === "monthly"
@@ -537,7 +561,7 @@ export function DashboardClient() {
                 </p>
                 <Button
                   disabled={isPending}
-                  onClick={() => handlePolarCheckout("golf-charity-yearly")}
+                  onClick={() => handlePolarCheckout("yearly")}
                   variant="outline"
                   className="mt-4 h-11 w-full border-white/15 bg-transparent hover:bg-white/8"
                 >
